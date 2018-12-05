@@ -4,35 +4,76 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 	<meta content="utf-8" http-equiv="encoding">
-	<title>Application</title>
-	
+	<title>Usini</title>
+
 	<!-- CSS -->
-	<link rel="stylesheet" href="../deps/metro-all.min.css">
-	
+	<link rel="stylesheet" href="deps/metro-all.min.css">
+
 	<!-- Semantic UI -->
-	<script src="../deps/jquery-3.3.1.min.js"></script>
-	<script src="../deps/metro.min.js"></script>
+	<script src="deps/jquery-3.3.1.min.js"></script>
+	<script src="deps/metro.min.js"></script>
 
 	<!-- Template Generator -->
-	<script src="../deps/qrcode.min.js"></script>
-	<script src="generator.js"></script>
+	<script src="deps/qrcode.min.js"></script>
+	<script src="UsiniTemplate.js"></script>
+	<script src="UsiniPanels.js"></script>
 
 	<!-- Connectors -->
-	<script src="../deps/reconnecting-websocket.min.js"></script>
-	<script src="../deps/librecarrier.js"></script>
-	<script src="detector.js"></script>
+	<script src="deps/reconnecting-websocket.min.js"></script>
+	<script src="deps/librecarrier.js"></script>
+	<script src="UsiniScan.js"></script>
 </head>
 
 <body>
 	<div class="container-fluid">
 		<h1 class="text-center"><img width="200px" src="usini-cards/diagrams/icons/logo_final.svg"></h1>
-		<div id="panels"></div>
+		<div id="panels-container"></div>
 	</div>
 </body>
+
+<script src="devices.js"></script>
+
+
 <script>
-	generate_scan(1000);
-	usini = new UsiniPanels("#panels","usini-panels");
-	usini.create_qrcode();
-	usini.create_settings();
+//Scan for new devices
+scan_interval = 1000 //Check new devices each seconds
+usini = new UsiniScan(scan_interval);
+usini.ondetected = create_device;
+usini.onremoved = remove_device;
+usini.start();
+
+//Search for new channels.
+function detect(){
+	usini.carrier.send("who");
+	//Check if new channel exists
+	for (var i = 0; i < usini.carrier.channels.length; i++) {
+		if(!usini.devices.hasOwnProperty(usini.carrier.channels[i])){
+			usini.ondetected(usini.carrier.channels[i]);
+		}
+	}
+
+	//Check if channels was removed
+	for(var device in usini.devices){
+		if(!usini.carrier.channels.includes(usini.devices[device].channel)){
+			usini.onremoved(device);
+		}
+	}
+}
+
+usini.carrier.onlogged = function(){
+    if(!usini.scanning){
+		usini.scanning = true;
+		detect();
+        usini.interval = setInterval(detect, scan_interval);
+    }
+}
+
+//Generate web interface
+usini.web = new UsiniPanels("#panels-container","usini-panels");
+usini.web.qrcode();
+usini.web.settings(usini.carrier.url);
+
 </script>
+
+
 </html>

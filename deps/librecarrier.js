@@ -42,7 +42,7 @@ function guessWebSocket(){
 class LibreCarrier extends ReconnectingWebSocket{
     constructor(channel = "", options = {}){
         let settings = {
-            url: false, //websocket url (ex:ws://127.0.0.1:42000)
+            url: false, //websocket url (ex:ws://127.0.0.1:42000/ws)
             password: false, //Set a password
             creator: false, //Create channel if it doesn't exists
             debug: true, //Debug message in console
@@ -82,7 +82,7 @@ class LibreCarrier extends ReconnectingWebSocket{
         this.passwordAttempt = 0;
         this.debugMessage("URL : " + this.url);
         this.onreceived = function(message){this.debugMessage(message)};
-        this.onlogged = function(){console.log(this.channels)};
+        this.onlogged = function(){};
     }
 
     debugMessage(message){
