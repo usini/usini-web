@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<title>Application</title>
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="../deps/metro-all.min.css">
+	
+	<!-- Semantic UI -->
+	<script src="../deps/jquery-3.3.1.min.js"></script>
+	<script src="../deps/metro.min.js"></script>
+
+	<!-- Template Generator -->
+	<script src="../deps/qrcode.min.js"></script>
+	<script src="generator.js"></script>
+
+	<!-- Connectors -->
+	<script src="../deps/reconnecting-websocket.min.js"></script>
+	<script src="../deps/librecarrier.js"></script>
+	<script src="detector.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h1 class="text-center"><img width="200px" src="usini-cards/diagrams/icons/logo_final.svg"></h1>
+		<div id="panels"></div>
+	</div>
+</body>
+<script>
+	generate_scan(1000);
+	usini = new UsiniPanels("#panels","usini-panels");
+	usini.create_qrcode();
+	usini.create_settings();
+</script>
+</html>
