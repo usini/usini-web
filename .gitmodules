@@ -1,0 +1,3 @@
+[submodule "usini-cards"]
+	path = usini-cards
+	url = https://github.com/usini/usini-cards
